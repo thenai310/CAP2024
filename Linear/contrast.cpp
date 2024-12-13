@@ -15,6 +15,7 @@ int main(int argc, char *argv[] ){
 
     printf("Running contrast enhancement for gray-scale images.\n");
     img_ibuf_g = read_pgm("in.pgm");
+    double tstart = MPI_Wtime();
     run_cpu_gray_test(img_ibuf_g);
     free_pgm(img_ibuf_g);
     
@@ -22,6 +23,8 @@ int main(int argc, char *argv[] ){
     img_ibuf_c = read_ppm("in.ppm");
     run_cpu_color_test(img_ibuf_c);
     free_ppm(img_ibuf_c);
+    double tend = MPI_Wtime();
+    printf("Processing time: %f (s)\n", (tend - tstart));
     MPI_Finalize();
     return 0;
 
@@ -30,21 +33,15 @@ int main(int argc, char *argv[] ){
 void run_cpu_color_test(PPM_IMG img_in)
 {
     PPM_IMG img_obuf_hsl, img_obuf_yuv;
-    
+
     printf("Starting CPU processing...\n");
-    double tstart = MPI_Wtime();
     img_obuf_hsl = contrast_enhancement_c_hsl(img_in);
-    double tend = MPI_Wtime();
     // printf("HSL processing time: %f (ms)\n", 0.0f /* TIMER */ );
-    printf("HSL processing time: %f (ms)\n", (tend - tstart) * 1000);
-    
+
     write_ppm(img_obuf_hsl, "out_hsl.ppm");
-    double yuv_tstart = MPI_Wtime();
     img_obuf_yuv = contrast_enhancement_c_yuv(img_in);
-    double yuv_tend = MPI_Wtime();
     // printf("YUV processing time: %f (ms)\n", 0.0f /* TIMER */);
-    printf("YUV processing time: %f (ms)\n", (yuv_tend - yuv_tstart) * 1000);
-    
+
     write_ppm(img_obuf_yuv, "out_yuv.ppm");
     
     free_ppm(img_obuf_hsl);
@@ -57,15 +54,10 @@ void run_cpu_color_test(PPM_IMG img_in)
 void run_cpu_gray_test(PGM_IMG img_in)
 {
     PGM_IMG img_obuf;
-    
-    
+
     printf("Starting CPU processing...\n");
-    double tstart = MPI_Wtime();
     img_obuf = contrast_enhancement_g(img_in);
-    double tend = MPI_Wtime();
-    // printf("Processing time: %f (ms)\n", 0.0f /* TIMER */ );
-    printf("Processing time: %f (ms)\n", (tend - tstart) * 1000);
-    
+
     write_pgm(img_obuf, "out.pgm");
     free_pgm(img_obuf);
 }
