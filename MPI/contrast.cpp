@@ -12,7 +12,7 @@ int main(int argc, char *argv[] ){
     MPI_Init(&argc, &argv);
     PGM_IMG img_ibuf_g;
     PPM_IMG img_ibuf_c;
-    a
+    aasdasd
         printf("Running contrast enhancement for gray-scale images.\n");
     img_ibuf_g = read_pgm("in.pgm");
     run_cpu_gray_test(img_ibuf_g);
